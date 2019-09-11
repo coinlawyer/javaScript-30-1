@@ -15,7 +15,7 @@ function addItem (e) {
     this.reset();
 }
 
-function populateList (plates = [], platesList) {
+  function populateList (plates = [], platesList) {
     platesList.innerHTML = plates.map((plate, i) => {
         return `
             <li>
@@ -26,7 +26,53 @@ function populateList (plates = [], platesList) {
         `;
     }).join('');
 }
+  
+function toggleDone(e) {
+  if (!e.target.matches('input')) return; // skip this unless it's an input
+  const el = e.target;
+  const index = el.dataset.index;
+  items[index].done = !items[index].done;
+  localStorage.setItem('items', JSON.stringify(items));
+  populateList(items, itemsList);
+}
 
-addItems.addEventListener('submit', addItem);
+  addItems.addEventListener('submit', addItem);
+  itemsList.addEventListener('click', toggleDone);
+  
+const deleteFirstItem = document.querySelector('.deleteFirst');
+const deleteLastItem = document.querySelector('.deleteLast');
+const deleteAllItems = document.querySelector('.deleteAll');
+const checkAllButton = document.querySelector('.checkAll');
+const uncheckAllButton = document.querySelector('.uncheckAll');
 
-populateList(items, itemsList);
+deleteFirstItem.addEventListener('click', removeFirstItem);
+deleteAllItems.addEventListener('click', removeItems);
+checkAllButton.addEventListener('click', checkAllItems);
+uncheckAllButton.addEventListener('click', checkAllItems);
+
+function removeFirstItem (items) {
+    document.querySelectorAll('ul.plates li')[0].remove();
+    localStorage.items.split('},').slice(0, 1);
+    delete items[0];
+    console.log('hello');
+}
+
+let itemElements = document.querySelectorAll('ul.plates li'); 
+function removeItems (items) {
+    let li = itemsList.firstElementChild;
+    itemsList.removeChild(li);
+    localStorage.clear();
+    console.log(itemsList);
+}
+
+function checkAllItems (e) {
+    items.forEach((item, index, items) => {
+      (e.target === checkAllButton) ? (items[index].done = true)
+        : (items[index].done = false) 
+      console.log(items); 
+    }); 
+    localStorage.setItem('items', JSON.stringify(items)); 
+    populateList(items, itemsList);
+  }
+  
+  populateList(items, itemsList);
