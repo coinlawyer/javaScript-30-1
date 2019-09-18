@@ -22,10 +22,34 @@ function paintToCanvas () {
     console.log(width, height);
     [canvas.width, canvas.height] = [width, height];
 
-    setInterval(() => {
+    return setInterval(() => {
         context.drawImage(video, 0, 0, width, height);
+        let pixels = context.getImageData(0, 0, width, height);
+        pixels = redEffect(pixels);
     }, 16);
 }
 
+function redEffect (pixels) {
+    for (let i = 0; i < pixels.length; i+=4) {
+        pexels[i + 0] = pixels.data[i + 0] + 100;// red
+        pixels[i + 1] = pixels.data[i + 1] -50;// green
+        pixels[i + 2] = pixels.data[i + 2] * 0.5 // blue
+
+    }
+}
+
+function takePhoto () {
+    snap.currentTime = 0;
+    snap.play();
+
+    const data = canvas.toDataURL('image/jpeg');
+    const link = document.createElement('a');
+    link.href = data;
+    link.setAttribute('download', 'handsome');
+    link.innerHTML = `<img src="${data}" alt="Handsome Man" />`;
+    strip.insertBefore(link, strip.firstChild);
+}
+
 getVideo();
-paintToCanvas();
+
+video.addEventListener('canplay', paintToCanvas); 
