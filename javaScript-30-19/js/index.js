@@ -26,8 +26,8 @@ function paintToCanvas () {
         let pixels = context.getImageData(0, 0, width, height);
         // mess them
        //pixels = redEffect(pixels);
-    //    pixels = rgbSplit(pixels);
-        pixels = greenScreen(pixels);  
+    //   pixels = rgbSplit(pixels);
+         pixels = greenScreen(pixels);  
     // pull them back
         context.putImageData(pixels, 0, 0);    
         // context.globalAlpha = 0.5;
@@ -52,41 +52,43 @@ function rgbSplit (pixels) {
     return pixels;
 }
 
-function greenScreen(pixels) {
-    const levels = {};
-    document.querySelectorAll('.rgb input').forEach((input)=>{
-        levels[input.name] = input.value;
-    });
-
-    for (let i = 0; i < pixels.data.length; i+=4) {
-        red = pixels.data[i + 0];
-        green = pixels.data[i + 1];
-        blue = pixels.data[i + 2];
-        alpha = pixels.data[i + 3];
-    
-        if (red >= levels.rmin
-            && green >= levels.gmin
-            && blue >= levels.bmin
-            && red <= levels.rmax
-            && green <= levels.gmax
-            && blue <= levels.bmax) {
-                // take it out
-            pixels.data[i + 3] = 0;
-            }
-    }
-    return pixels;
-}
 
 function takePhoto () {
     snap.currentTime = 0;
     snap.play();
-
+    
     const data = canvas.toDataURL('image/jpeg');
     const link = document.createElement('a');
     link.href = data;
     link.setAttribute('download', 'handsome');
     link.innerHTML = `<img src="${data}" alt="Handsome Man" />`;
     strip.insertBefore(link, strip.firstChild);
+}
+
+function greenScreen(pixels) {
+    const levels = {};
+    document.querySelectorAll('.rgb input').forEach((input)=> {
+        levels[input.name] = input.value;
+    });
+   
+    for (i = 0; i < pixels.data.length; i= i + 4) {
+        red = pixels.data[i + 0];
+        green = pixels.data[i + 1];
+        blue = pixels.data[i + 2];
+        alpha = pixels.data[i + 3];
+        
+        if (red >= levels.rmin
+            && green >= levels.gmin
+            && blue >= levels.bmin
+            && red <= levels.rmax
+            && green <= levels.gmax
+            && blue <= levels.bmax) {
+            // take it out!
+            pixels.data[i + 3] = 0;
+            console.log(pixels.data);
+          }
+        }
+    return pixels;
 }
 
 getVideo();
